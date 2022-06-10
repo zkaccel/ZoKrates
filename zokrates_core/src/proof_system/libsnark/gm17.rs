@@ -7,6 +7,7 @@ use crate::proof_system::libsnark::{
 use crate::proof_system::Scheme;
 use crate::proof_system::{Backend, G1Affine, G2Affine, NonUniversalBackend, Proof, SetupKeypair};
 use std::io::{BufReader, BufWriter, Write};
+use std::ptr;
 use zokrates_field::{Bn128Field, Field};
 
 extern "C" {
@@ -124,7 +125,7 @@ impl Backend<Bn128Field, GM17> for Libsnark {
             gm17_bn128_verify(
                 &mut vk_buffer as *mut _,
                 &mut proof_buffer as *mut _,
-                public_inputs_arr[0].as_ptr(),
+                if public_inputs_arr.len() > 0 { public_inputs_arr[0].as_ptr() } else { ptr::null() },
                 public_inputs_length as i32,
             )
         }
